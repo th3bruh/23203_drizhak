@@ -1,221 +1,153 @@
 #include <algorithm>
-#include <iostream>
-#include <iterator>
 #include <stdexcept>
 #include <string>
-#include <cstring>
-#include <cstdlib>
 
+#include "flatmap.h"
 
-typedef std::string Key;
-
-struct Value {
-  unsigned int age;
-  unsigned int weight;
-};
-
-struct Elem {
+struct FlatMap::Elem {
   Key k;
   Value v;
+
+  Elem() = default;
+
+  Elem(Key key, Value value) : k(key), v(value){}
+
+  auto operator<=>(const Elem& b) const {
+    return k <=> b.k;
+  }
+  friend bool operator==(const Elem& a, const Elem& b) {
+    return a.k == b.k && a.v == b.v;
+  }
 };
 
-static bool compare_elem(const Elem &a, const Elem &b) {
-  return a.k < b.k;
+FlatMap::FlatMap() : used(0),
+                     allocated(INIT_ALLOCATED) {
+  ptr = new Elem[INIT_ALLOCATED];
 }
 
-class FlatMap
-{
-public:
+FlatMap::~FlatMap() {
+  delete[] ptr;
+  ptr = nullptr;
+}
 
-  FlatMap() {
-    ptr = new Elem[init_allocated];
-    used = 0;
-    allocated = init_allocated;
-  };
+FlatMap::FlatMap(const FlatMap& b) : used(b.used),
+                                     allocated(b.allocated) {
+  ptr = new Elem[b.allocated];
+  std::copy(b.ptr, b.ptr + b.used, ptr);
+}
 
-  ~FlatMap() {
-    delete[] ptr;
-  };
+FlatMap::FlatMap(FlatMap&& b) : used(b.used),
+                                allocated(b.allocated) {
+  std::swap(ptr, b.ptr);
+}
 
-  FlatMap(const FlatMap& b) {
-    ptr = new Elem[b.allocated];
-    used = b.used;
-    allocated = b.allocated;
+void FlatMap::swap(FlatMap& b) {
+  std::swap(*this, b);
+}
 
-    std::copy(b.ptr, b.ptr + b.used, ptr);
-  }
+FlatMap& FlatMap::operator=(const FlatMap& b) {
+  if (this == &b) return *this;
 
-  FlatMap(FlatMap&& b) {
-    ptr = b.ptr;
-    used = b.used;
-    allocated = b.allocated;
+  reallocate(b.allocated);
+  used = b.used;
+  std::copy(b.ptr, b.ptr + b.used, ptr);
 
-    b.ptr = nullptr;
+  return *this;
+}
 
-    std::cout << "move" << std::endl;
-  }
+FlatMap& FlatMap::operator=(FlatMap&& b) {
+  if (this == &b) return *this;
 
+  delete[] ptr;
+  ptr = b.ptr;
+  used = b.used;
+  allocated = b.allocated;
 
-  // Обменивает значения двух флетмап.
-  // Подумайте, зачем нужен этот метод, при наличии стандартной функции
-  // std::swap.
-  void swap(FlatMap& b) {
-    FlatMap tmp = std::move(b);
-    b = std::move(*this);
-    *this = std::move(tmp);
-  }
+  b.ptr = nullptr;
+  return *this;
+}
 
-  FlatMap& operator=(const FlatMap& b) {
-    ptr = new Elem[b.allocated];
-    used = b.used;
-    allocated = b.allocated;
+void FlatMap::clear() {
+  used = 0;
+  reallocate(INIT_ALLOCATED);
+}
 
-    std::copy(b.ptr, b.ptr + b.used, ptr);
-
-    return *this;
-  }
-
-  FlatMap& operator=(FlatMap&& b) {
-    ptr = b.ptr;
-    used = b.used;
-    allocated = b.allocated;
-
-    b.ptr = nullptr;
-
-    return *this;
-  }
-
-
-  // Очищает контейнер.
-  void clear() {
-    used = 0;
-    allocated = init_allocated;
-    delete[] ptr;
-    ptr = new Elem[init_allocated];
-  }
-  // Удаляет элемент по заданному ключу.
-  bool erase(const Key& k) {
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-
-    if (pos->k != k) return 1;
-    pos->~Elem();
-    
-    std::copy(pos + 1, ptr + used, pos);
-    --used;
-    return 0;
-  }
-
-  // Вставка в контейнер. Возвращаемое значение - успешность вставки.
-
-  bool insert(const Key& k, const Value& v) {
-    if (expand_if_needed()) return 1;
-
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-    std::copy_backward(pos, ptr + used, ptr + used + 1);
-
-    *pos = {k, v};
-    ++used;
-
-    std::cout << "k: " << k << std::endl;
-    for (size_t i = 0; i < used; ++i) {
-      std::cout << (ptr+i)->k << std::endl;
-    }
-
-    return 0;
-  };
-
-  // Проверка наличия значения по заданному ключу.
-  bool contains(const Key& k) const {
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-
-    return pos->k == k;
-  }
-
-  // Возвращает значение по ключу. Небезопасный метод.
-  // В случае отсутствия ключа в контейнере, следует вставить в контейнер
-  // значение, созданное конструктором по умолчанию и вернуть ссылку на него. 
-  Value& operator[](const Key& k) {
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-
-    int idx = std::distance(ptr, pos);
-    if (pos->k == k) return pos->v;
-
-    if (insert(k, Value())) {
-      //do what? 
-    }
-    return ptr[idx].v;
-  }
-
-  // Возвращает значение по ключу. Бросает исключение при неудаче.
-  Value& at(const Key& k) {
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-
-    if (pos->k != k) throw std::runtime_error("invalid key: " + k);
-    return pos->v;
-  }
-  const Value& at(const Key& k) const {
-    Elem* pos = std::lower_bound(ptr, ptr+used, (Elem){k, {0, 0}}, compare_elem);
-
-    if (pos->k != k) throw std::runtime_error("invalid key: " + k);
-    return pos->v;
-  }
-
-  size_t size() const {
-    return used;
-  }
-  bool empty() const {
-    return !used;
-  };
-
-  friend bool operator==(const FlatMap& a, const FlatMap& b);
-  friend bool operator!=(const FlatMap& a, const FlatMap& b);
-
-private:
-  bool expand_if_needed() {
-    if (used < allocated) return 0;
-
-    std::cout << allocated << std::endl;
-    std::cout << sizeof(Elem) * allocated * 2 << std::endl;
-
-    Elem* new_ptr = new Elem[allocated *= 2];
-
-    std::copy(ptr, ptr + used, new_ptr);
-
-    delete[] ptr;
-
-    ptr = new_ptr;
-
-    /*Elem* tmp_ptr = (Elem*)std::realloc(ptr, sizeof(Elem) * allocated * 2); segfaults
-    if (nullptr == tmp_ptr) return 1;
-
-    ptr = tmp_ptr;
-    allocated *= 2;*/
-
-    for (size_t i = 0; i < used; ++i) {
-      std::cout << (ptr+i)->k << std::endl;
-    }
-
-    return 0;
-  };
-
-  static const size_t init_allocated = 4;
-  //Key* keys;
-  //Value* values;
-  Elem* ptr;
-  size_t used;
-  size_t allocated;
-};
-
-int main(){
-  std::cout << "sizeof(Key): " << sizeof(Key) << std::endl;
-  std::cout << "sizeof(Value): " << sizeof(Value) << std::endl;
-  std::cout << "sizeof(Elem): " << sizeof(Elem) << std::endl;
-  FlatMap f;
-  f.insert("abc", {1, 1});
-  f.insert("acc", {1, 1});
-  f.insert("adc", {1, 1});
-  f.insert("aec", {1, 1});
-  f.insert("afc", {1, 1});
-
+bool FlatMap::erase(const Key& k) {
+  Elem* pos = std::lower_bound(ptr, ptr+used, Elem(k, Value()));
+  if (pos == ptr + used || pos->k != k) return 1;
+  
+  std::copy(pos + 1, ptr + used, pos);
+  --used;
+  
+  if (used < allocated / (SCALE_FACTOR * SCALE_FACTOR) && INIT_ALLOCATED < allocated) reallocate(allocated / SCALE_FACTOR);
   return 0;
 }
+
+bool FlatMap::insert(const Key& k, const Value& v) {
+  Elem* pos = std::lower_bound(ptr, ptr+used, Elem(k, Value()));
+  const size_t idx = std::distance(ptr, pos);
+
+  if (idx != used && pos->k == k) return 1;
+  if (used >= allocated) reallocate(allocated * SCALE_FACTOR);
+
+  std::copy_backward(ptr + idx, ptr + used, ptr + used + 1);
+  ptr[idx] = {k, v};
+  ++used;
+  return 0;
+};
+
+bool FlatMap::contains(const Key& k) const {
+  Elem* pos = std::lower_bound(ptr, ptr + used, Elem(k, Value()));
+  return pos != ptr + used && pos->k == k;
+}
+
+Value& FlatMap::operator[](const Key& k) {
+  Elem* pos = std::lower_bound(ptr, ptr+used, Elem(k, Value()));
+
+  const size_t idx = std::distance(ptr, pos);
+  if (idx != used && pos->k == k) return pos->v;
+
+  insert(k, Value(), idx);
+  return ptr[idx].v;
+}
+
+Value& FlatMap::at(const Key& k) {
+  Elem* pos = std::lower_bound(ptr, ptr+used, Elem(k, Value()));
+
+  if (pos == ptr + used || pos->k != k) throw std::runtime_error("invalid key: " + k);
+  return pos->v;
+}
+
+const Value& FlatMap::at(const Key& k) const {
+  const Elem* pos = std::lower_bound(ptr, ptr+used, Elem(k, Value()));
+
+  if (pos == ptr + used || pos->k != k) throw std::runtime_error("invalid key: " + k);
+  return pos->v;
+}
+
+bool operator==(const FlatMap& a, const FlatMap& b) {
+  return a.used == b.used && std::equal(a.ptr, a.ptr + a.used, b.ptr);
+}
+
+bool operator!=(const FlatMap& a, const FlatMap& b) {
+  return !(a == b);
+}
+
+void FlatMap::reallocate(size_t new_allocated) {
+  Elem* new_ptr = new Elem[new_allocated];
+
+  std::copy(ptr, ptr + used, new_ptr);
+
+  delete[] ptr;
+  ptr = new_ptr;
+  allocated = new_allocated;
+};
+
+void FlatMap::insert(const Key& k, const Value& v, size_t idx) {
+  if (used >= allocated) reallocate(allocated * SCALE_FACTOR);
+
+  std::copy_backward(ptr + idx, ptr + used, ptr + used + 1);
+
+  ptr[idx] = {k, v};
+  ++used;
+};

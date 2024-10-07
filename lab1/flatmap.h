@@ -1,0 +1,79 @@
+#include <string>
+
+
+typedef std::string Key;
+
+struct Value {
+  unsigned int age = 0;
+  unsigned int height = 0;
+
+  friend bool operator==(const Value& a, const Value& b) {
+    return a.age == b.age && a.height == b.height;
+  }
+  friend bool operator!=(const Value& a, const Value& b) {
+    return !(a == b);
+  }
+};
+
+
+class FlatMap {
+public:
+  FlatMap();
+
+  ~FlatMap(); 
+
+  FlatMap(const FlatMap& b);
+  FlatMap(FlatMap&& b);
+
+  void swap(FlatMap& b);
+
+  FlatMap& operator=(const FlatMap& b);
+
+  FlatMap& operator=(FlatMap&& b);
+
+  // Removes all elements
+  void clear();
+
+  // Removes element with key k 
+  // returns 0 on success, 1 otherwise
+  bool erase(const Key& k);
+
+  // Inserts element with key k and value v
+  // returns 0 on success, 1 otherwise
+  bool insert(const Key& k, const Value& v);
+
+  // retuns 1 if element with key k is in flatmap, 0 otherwise
+  bool contains(const Key& k) const;
+
+  // Returns reference to the value of element with key k.
+  // If no such element is in flatmap, creates new element with k and default value and returns reference to it
+  Value& operator[](const Key& k);
+
+  // Returns reference to the value of element with key k.
+  // Throws std::runtime_error if no such element is in flatmap 
+  Value& at(const Key& k);
+  const Value& at(const Key& k) const;
+
+  size_t size() const {
+    return used;
+  }
+  bool empty() const {
+    return !used;
+  };
+
+  friend bool operator==(const FlatMap& a, const FlatMap& b);
+  friend bool operator!=(const FlatMap& a, const FlatMap& b);
+
+private:
+  void reallocate(size_t new_allocated);
+  void insert(const Key& k, const Value& v, size_t idx);
+
+  static const size_t INIT_ALLOCATED = 4;
+  static const size_t SCALE_FACTOR = 2;
+
+  struct Elem;
+
+  Elem* ptr = nullptr;
+  size_t used = 0;
+  size_t allocated = INIT_ALLOCATED;
+};

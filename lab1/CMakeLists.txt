@@ -20,8 +20,8 @@ if(ENABLE_MSAN)
 endif()
 
 if(CHECK_COVERAGE)
-  target_compile_options(${PROJECT_NAME} PUBLIC -g -O0 -fprofile-arcs -ftest-coverage)
-  target_link_options(${PROJECT_NAME} PUBLIC -lgcov --coverage)
+  target_compile_options(${PROJECT_NAME} PUBLIC -g -O0 --coverage)
+  target_link_options(${PROJECT_NAME} PUBLIC --coverage)
 endif()
 
 enable_testing()

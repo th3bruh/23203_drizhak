@@ -43,7 +43,7 @@ public:
   // returns 1 on success, 0 otherwise
   bool insert(const Key& k, const Value& v);
 
-  // retuns 1 if element with key k is in flatmap, 0 otherwise
+  // returns 1 if element with key k is in flatmap, 0 otherwise
   [[nodiscard]] bool contains(const Key& k) const;
 
   // Returns reference to the value of element with key k.

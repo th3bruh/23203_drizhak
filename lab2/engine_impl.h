@@ -2,10 +2,12 @@
 
 #include "engine.h"
 #include "factory.h"
+#include "strategy.h"
+#include "user_interface.h"
 
-namespace engine_namespace {
+namespace engine {
 template <class T>
 using Registrator =
-    Registrator<std::string, Engine, T, std::vector<std::string>, std::string,
-                std::string, unsigned int>;
+    Registrator<std::string, Engine, T, std::vector<Strategy*>&, UserInterface&,
+                Deck&>;
 }

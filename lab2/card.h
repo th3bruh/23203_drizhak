@@ -11,7 +11,7 @@ struct Card {
   };
 
   enum class Rank {
-    one,
+    one = 1,
     two,
     three,
     four,

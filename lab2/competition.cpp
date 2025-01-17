@@ -17,17 +17,15 @@ enum class Mode {
 
 class Competition : public Engine {
  public:
-  Competition(Mode mode, std::vector<std::string> strategies,
-              std::string deck,
-              std::string interface,
-              unsigned int deck_number)
+  Competition(Mode mode, std::vector<Strategy*> strategies,
+              UserInterface& interface,
+              Deck& deck)
       : mode_(mode),
-        deck_(Factory<std::string, std::function<Deck*(unsigned int)>>::Create(deck, deck_number)),
-        interface_(Factory<std::string, std::function<UserInterface*()>>::Create(interface)) {
-    // TODO? warning if mode == competition &
-    assert(strategies.size() >= 2);
-    s1.strategy = Factory<std::string, std::function<Strategy*()>>::Create(strategies[1]);
-    s2.strategy = Factory<std::string, std::function<Strategy*()>>::Create(strategies[2]);
+        interface_(interface),
+        deck_(deck) {
+    assert(strategies.size() == 2);
+    s1.strategy = strategies[0];
+    s2.strategy = strategies[1];
   }
 
   void Play() override {
@@ -57,11 +55,11 @@ class Competition : public Engine {
     unsigned int ace_count = 0;
     unsigned int score = 0;
     std::vector<Card> cards;
-    std::unique_ptr<Strategy> strategy;
+    Strategy* strategy;
   };
 
   bool GiveCard(StrategyData& s) {
-    Card card = deck_->GetCard();
+    Card card = deck_.GetCard();
     s.score += card.Value();
     s.cards.push_back(card);
     s.strategy->TakeCard(s.cards.back());
@@ -75,13 +73,13 @@ class Competition : public Engine {
 
   Mode mode_;
   bool winner = false;
-  std::unique_ptr<Deck> deck_;
-  std::unique_ptr<UserInterface> interface_;
+  UserInterface& interface_;
+  Deck& deck_;
   StrategyData s1;
   StrategyData s2;
 };
 
 namespace {
-engine_namespace::Registrator<Competition> r("detailed", Mode::DETAILED);
-engine_namespace::Registrator<Competition> d("fast", Mode::FAST);
+engine::Registrator<Competition> d("detailed", Mode::DETAILED);
+engine::Registrator<Competition> f("fast", Mode::FAST);
 }  // namespace

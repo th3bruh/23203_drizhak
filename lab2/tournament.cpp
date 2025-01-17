@@ -1,4 +1,7 @@
+#include "deck.h"
 #include "engine_impl.h"
+#include "strategy.h"
+#include "user_interface.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -8,14 +11,12 @@
 
 class Tournament : public Engine {
  public:
-  Tournament(std::vector<std::string> strategies,
-              std::string deck,
-              std::string interface,
-              unsigned int deck_number)
+  Tournament(const std::vector<Strategy*>& strategies,
+              UserInterface& interface,
+              Deck& deck)
       : strategies_(strategies),
-        deck_(deck),
-        deck_number_(deck_number),
         interface_(interface),
+        deck_(deck),
         win_count_(strategies.size(), 0) {
   }
   void Play() override {
@@ -24,12 +25,12 @@ class Tournament : public Engine {
       for (size_t j = 0; j < strategies_.size(); ++j) {
         if (i == j) continue;
 
-        std::vector<std::string> tmp{strategies_[i], strategies_[j]};
-        std::unique_ptr<Engine> competition = engine_namespace::Factory::Create("fast", tmp, deck_, interface_, deck_number_);
+        std::vector<Strategy*> tmp{strategies_[i], strategies_[j]};
+        std::unique_ptr<Engine> competition = engine::Factory::Create("fast", tmp, interface_, deck_);
         competition->Play();
 
         for (size_t k : competition->GetWinners()) {
-          win_count_[k]++;
+          win_count_[k ? j : i]++;
         }
       }
     }
@@ -44,13 +45,12 @@ class Tournament : public Engine {
     return winners;
   }
  private:
-  std::vector<std::string> strategies_;
-  std::string deck_;
-  unsigned int deck_number_;
-  std::string interface_;
+  const std::vector<Strategy*>& strategies_;
+  UserInterface& interface_;
+  Deck& deck_;
   std::vector<unsigned int> win_count_;
 };
 
 namespace {
-engine_namespace::Registrator<Tournament> r("tournament");
+engine::Registrator<Tournament> r("tournament");
 }  // namespace

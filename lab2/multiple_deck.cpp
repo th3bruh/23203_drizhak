@@ -1,6 +1,7 @@
 #include "deck.h"
 
 #include <algorithm>
+#include <array>
 #include <random>
 #include <string>
 #include <vector>
@@ -8,10 +9,10 @@
 #include "card.h"
 #include "factory.h"
 
-const std::vector<Card::Suit> suits = {Card::Suit::clubs, Card::Suit::diamonds,
+constexpr std::array<Card::Suit, 4> suits = {Card::Suit::clubs, Card::Suit::diamonds,
                                        Card::Suit::hearts, Card::Suit::spades};
 
-const std::vector<Card::Rank> ranks = {
+constexpr std::array<Card::Rank, 14> ranks = {
     Card::Rank::one,  Card::Rank::two, Card::Rank::three, Card::Rank::four,
     Card::Rank::five, Card::Rank::six, Card::Rank::seven, Card::Rank::eight,
     Card::Rank::nine, Card::Rank::ten, Card::Rank::jack,  Card::Rank::queen,

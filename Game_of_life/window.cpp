@@ -8,6 +8,7 @@ Window::Window(QWidget *parent)
     ui->setupUi(this);
     ui->field->setSpeed(ui->dial->value());
     ui->field->setSize(ui->spinBox_X->value(), ui->spinBox_Y->value());
+    ui->field->setCellSize(ui->spinBoxCellSize->value());
 }
 
 Window::~Window()
@@ -63,4 +64,9 @@ void Window::on_spinBox_Y_valueChanged(int value)
 {
     ui->pushButtonResize->setEnabled(ui->spinBox_Y->value() != ui->field->getSizeX()
                                      || value != ui->field->getSizeY());
+}
+
+void Window::on_spinBoxCellSize_valueChanged(int value)
+{
+    ui->field->setCellSize(value);
 }

@@ -10,6 +10,8 @@ public:
 
     const std::vector<bool> &getField();
     void flipCell(int x, int y);
+    void setCell(int x, int y, bool state);
+    bool getCell(int x, int y);
     void step();
     void reset();
     void setSize(int x, int y);

@@ -30,6 +30,8 @@ private slots:
 
     void on_spinBox_Y_valueChanged(int arg1);
 
+    void on_spinBoxCellSize_valueChanged(int arg1);
+
 private:
     Ui::Window *ui;
 };

@@ -34,115 +34,11 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0">
      <property name="verticalSpacing">
       <number>7</number>
      </property>
-     <item row="5" column="1">
-      <widget class="QPushButton" name="pushButtonReset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Reset</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QPushButton" name="pushButtonStep">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Step</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButtonResize">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Resize</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="2">
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="4,6" columnminimumwidth="0,0">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Width</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="spinBox_X">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimum">
-          <number>3</number>
-         </property>
-         <property name="maximum">
-          <number>500</number>
-         </property>
-         <property name="value">
-          <number>30</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Height</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBox_Y">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::LeftToRight</enum>
-         </property>
-         <property name="minimum">
-          <number>3</number>
-         </property>
-         <property name="maximum">
-          <number>500</number>
-         </property>
-         <property name="value">
-          <number>40</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="3" column="0" colspan="2">
+     <item row="4" column="0" colspan="2">
       <widget class="QDial" name="dial">
        <property name="accessibleName">
         <string/>
@@ -164,7 +60,134 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="2">
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="spinBoxCellSize">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>15</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinBox_Y">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LayoutDirection::LeftToRight</enum>
+       </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <number>500</number>
+       </property>
+       <property name="value">
+        <number>40</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Speed</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QPushButton" name="pushButtonResize">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Resize</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spinBox_X">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <number>500</number>
+       </property>
+       <property name="value">
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Height</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="pushButtonReset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QPushButton" name="pushButtonStep">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Step</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Cell size</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="2">
       <widget class="QPushButton" name="pushButtonPlay">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -174,16 +197,6 @@
        </property>
        <property name="text">
         <string>Play</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Speed</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
      </item>

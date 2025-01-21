@@ -13,6 +13,19 @@ void Engine::flipCell(int x, int y)
     assert(x + size_x * y < curr_field.size());
     curr_field[x + size_x * y] = !curr_field[x + size_x * y];
 }
+
+void Engine::setCell(int x, int y, bool state)
+{
+    assert(x + size_x * y < curr_field.size());
+    curr_field[x + size_x * y] = state;
+}
+
+bool Engine::getCell(int x, int y)
+{
+    assert(x + size_x * y < curr_field.size());
+    return curr_field[x + size_x * y];
+}
+
 void Engine::setSize(int x, int y)
 {
     assert(x >= 3 && y >= 3);

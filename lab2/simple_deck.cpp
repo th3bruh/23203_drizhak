@@ -1,9 +1,9 @@
-#include <cstdlib>
+#include "deck.h"
+
 #include <random>
 #include <string>
 
 #include "card.h"
-#include "deck.h"
 #include "factory.h"
 
 class SimpleDeck : public Deck {

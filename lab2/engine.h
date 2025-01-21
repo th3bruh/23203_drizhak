@@ -11,8 +11,6 @@
 class Engine {
  public:
   virtual void Play() = 0;
-  virtual void PrintWinners() = 0;
-  virtual std::vector<size_t> GetWinners() = 0;
   virtual ~Engine() = default;
 };
 
